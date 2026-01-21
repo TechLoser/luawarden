@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lua Warden - Secure Lua Script Sharing</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <h1>Lua<span class="highlight">Warden</span></h1>
+            </div>
+            <p class="subtitle">Secure Lua Script Protection & Sharing</p>
+        </header>
+
+        <main class="main-content">
+            <div class="upload-section">
+                <div class="card">
+                    <h2><i class="fas fa-upload"></i> Upload Your Lua Script</h2>
+                    <p class="description">Protect your code and get a secure link for loadstring access</p>
+                    
+                    <form id="uploadForm" class="upload-form">
+                        <div class="input-group">
+                            <label for="luaFile">
+                                <i class="fas fa-file-code"></i>
+                                <span>Upload Lua File</span>
+                                <input type="file" id="luaFile" name="luaFile" accept=".lua" />
+                            </label>
+                        </div>
+
+                        <div class="or-divider">
+                            <span>or</span>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="code">
+                                <i class="fas fa-keyboard"></i>
+                                <span>Paste Raw Code</span>
+                            </label>
+                            <textarea 
+                                id="code" 
+                                name="code" 
+                                placeholder="Enter your Lua script here..."
+                                rows="10"
+                            ></textarea>
+                        </div>
+
+                        <button type="submit" class="upload-btn">
+                            <span class="btn-text">Protect Script</span>
+                            <i class="fas fa-shield-alt"></i>
+                        </button>
+                    </form>
+
+                    <div id="result" class="result hidden">
+                        <div class="result-content">
+                            <i class="fas fa-check-circle success-icon"></i>
+                            <h3 id="resultTitle">Success!</h3>
+                            <p id="resultMessage"></p>
+                            <div class="link-container">
+                                <input type="text" id="shareLink" readonly>
+                                <button class="copy-btn" onclick="copyLink()">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features">
+                <div class="feature-card">
+                    <i class="fas fa-lock"></i>
+                    <h3>Secure Storage</h3>
+                    <p>Your scripts are protected with unique hashes</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-link"></i>
+                    <h3>Loadstring Ready</h3>
+                    <p>Generated links work perfectly with loadstring()</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-eye-slash"></i>
+                    <h3>Private Access</h3>
+                    <p>Only those with the exact link can access your code</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2026 Lua Warden. Made with <i class="fas fa-heart"></i> for Lua developers.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
