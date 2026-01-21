@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paste - Lua Warden</title>
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <h1>Lua<span class="highlight">Warden</span></h1>
+            </div>
+            <p class="subtitle">Secure Lua Script Paste</p>
+        </header>
+
+        <main class="main-content">
+            <div class="card">
+                <div class="paste-header">
+                    <h2><i class="fas fa-file-code"></i> Protected Script</h2>
+                    <div class="loadstring-info">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Use this with loadstring():</span>
+                        <code>loadstring(game:HttpGet("https://your-domain.com/raw/YOUR_HASH"))()</code>
+                    </div>
+                </div>
+
+                <div id="codeContainer" class="code-container">
+                    <pre><code id="scriptCode">Loading script...</code></pre>
+                </div>
+
+                <div class="paste-actions">
+                    <button class="copy-btn" onclick="copyCode()">
+                        <i class="fas fa-copy"></i> Copy Code
+                    </button>
+                    <a href="/raw/<%= hash %>" class="raw-btn" download>
+                        <i class="fas fa-download"></i> Download .lua
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2026 Lua Warden. Secure script sharing for developers.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Get hash from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const hash = window.location.pathname.split('/').pop();
+        
+        // Fetch and display code
+        async function loadScript() {
+            try {
+                const response = await fetch(`/raw/${hash}`);
+                if (response.ok) {
+                    const code = await response.text();
+                    document.getElementById('scriptCode').textContent = code;
+                    document.title = `Paste ${hash.substring(0, 8)} - Lua Warden`;
+                    
+                    // Syntax highlighting (basic)
+                    highlightCode();
+                } else {
+                    document.getElementById('scriptCode').textContent = 'Script not found or access denied.';
+                }
+            } catch (error) {
+                console.error('Error loading script:', error);
+                document.getElementById('scriptCode').textContent = 'Error loading script.';
+            }
+        }
+
+        function highlightCode() {
+            const code = document.getElementById('scriptCode');
+            const text = code.textContent;
+            
+            // Basic Lua syntax highlighting
+            const highlighted = text
+                .replace(/\b(function|end|if|then|else|elseif|while|do|for|in|return|local|nil|true|false)\b/g, '<span class="keyword">$1</span>')
+                .replace(/(".*?"|'.*?')/g, '<span class="string">$1</span>')
+                .replace(/--.*$/gm, '<span class="comment">$&</span>')
+                .replace(/(\d+)/g, '<span class="number">$1</span>');
+            
+            code.innerHTML = highlighted;
+        }
+
+        function copyCode() {
+            const codeElement = document.getElementById('scriptCode');
+            const text = codeElement.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target.closest('button');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                btn.style.background = '#10b981';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+            });
+        }
+
+        // Load script when page loads
+        document.addEventListener('DOMContentLoaded', loadScript);
+
+        // Add some visual effects
+        document.addEventListener('mousemove', (e) => {
+            const cursor = document.querySelector('.cursor') || document.createElement('div');
+            if (!cursor.classList.contains('cursor')) {
+                cursor.className = 'cursor';
+                cursor.style.cssText = `
+                    position: fixed;
+                    width: 20px;
+                    height: 20px;
+                    border: 2px solid #8b5cf6;
+                    border-radius: 50%;
+                    pointer-events: none;
+                    z-index: 9999;
+                    transition: transform 0.1s ease;
+                    mix-blend-mode: difference;
+                `;
+                document.body.appendChild(cursor);
+            }
+            
+            cursor.style.left = e.clientX - 10 + 'px';
+            cursor.style.top = e.clientY - 10 + 'px';
+        });
+    </script>
+
+    <style>
+        .paste-header {
+            margin-bottom: 20px;
+        }
+        
+        .loadstring-info {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .loadstring-info code {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #8b5cf6;
+        }
+        
+        .code-container {
+            background: #1a1a1a;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            max-height: 500px;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .code-container pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .code-container code {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .keyword { color: #8b5cf6; font-weight: bold; }
+        .string { color: #10b981; }
+        .comment { color: #6b7280; }
+        .number { color: #f59e0b; }
+        
+        .paste-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .raw-btn {
+            background: #6b7280;
+            color: white;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .raw-btn:hover {
+            background: #4b5563;
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .paste-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .loadstring-info {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</body>
+</html>
